@@ -4,11 +4,15 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -28,7 +32,8 @@ public class MainActivity extends AppCompatActivity implements FrgTelefono.OnFrg
 
     ArrayAdapter<String> adapter;
 
-    Button btnBorrarHistorial;
+    Button btnBorrarHistorial, btnDetails;
+    Spinner spnTelefonos;
 
     DBManager dbManager;
     @Override
@@ -46,6 +51,28 @@ public class MainActivity extends AppCompatActivity implements FrgTelefono.OnFrg
             listaFrgTelefonos[i++]=frgTelefono;
             frgTelefono.setOnFrgTelefono(new Telefono(i),this);
         }
+        btnDetails = findViewById(R.id.btnTelfDetail);
+
+        spnTelefonos = findViewById(R.id.spnTelfs);
+
+        spnTelefonos.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, getNumsTelfs()));
+        spnTelefonos.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+                btnDetails.setEnabled(true);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                btnDetails.setEnabled(false);
+            }
+        });
+
+        btnDetails.setOnClickListener(v -> {
+            Intent intent = new Intent(this, TelfDetailActivity.class);
+            intent.putExtra("telefono", Integer.parseInt(spnTelefonos.getSelectedItem().toString()));
+            startActivity(intent);
+        });
 
         listaLlamadas = llamadas();
         adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, listaLlamadas);
@@ -68,6 +95,15 @@ public class MainActivity extends AppCompatActivity implements FrgTelefono.OnFrg
             int telefono = listaFrgTelefonos[i].getTelefono().getNumero();
             lista.add("Telf: " + telefono + " E: " +
                     dbManager.getCantEntrantes(telefono) + " S: " + dbManager.getCantSalientes(telefono));
+        }
+        return lista;
+    }
+
+    private ArrayList<String> getNumsTelfs() {
+        ArrayList<String> lista=new ArrayList<>();
+        for(int i = 0; i < listaFrgTelefonos.length; i++) {
+            int telefono = listaFrgTelefonos[i].getTelefono().getNumero();
+            lista.add(String.valueOf(telefono));
         }
         return lista;
     }

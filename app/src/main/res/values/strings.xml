@@ -4,4 +4,6 @@
     <string name="aceptaLlamada">acepta llamada</string>
     <string name="comunicando">comunicando</string>
     <string name="delete_history">Borrar Historial</string>
+    <string name="telfDetaiñ">Detalles llamadas</string>
+    <string name="telfEjemplo">986</string>
 </resources>
