@@ -6,6 +6,7 @@
     android:layout_gravity="center"
     android:gravity="center"
     android:orientation="vertical"
+    android:backgroundTint="@android:color/darker_gray"
     tools:context=".MainActivity">
     <LinearLayout
         android:layout_width="wrap_content"
