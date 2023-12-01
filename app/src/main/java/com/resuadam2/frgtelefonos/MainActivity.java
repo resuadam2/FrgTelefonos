@@ -7,6 +7,7 @@ import android.annotation.SuppressLint;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -26,6 +27,8 @@ public class MainActivity extends AppCompatActivity implements FrgTelefono.OnFrg
     ArrayList<String> listaLlamadas;
 
     ArrayAdapter<String> adapter;
+
+    Button btnBorrarHistorial;
 
     DBManager dbManager;
     @Override
@@ -47,6 +50,14 @@ public class MainActivity extends AppCompatActivity implements FrgTelefono.OnFrg
         listaLlamadas = llamadas();
         adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, listaLlamadas);
         lvTelefonos.setAdapter(adapter);
+
+        btnBorrarHistorial = findViewById(R.id.btnDeleteHistory);
+        btnBorrarHistorial.setOnClickListener(v -> {
+            dbManager.borrarLlamadas();
+            listaLlamadas.clear();
+            listaLlamadas.addAll(llamadas());
+            adapter.notifyDataSetChanged();
+        });
 
     }
 

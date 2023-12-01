@@ -61,6 +61,12 @@ public class DBManager extends SQLiteOpenHelper {
         return db.rawQuery(sql, null);
     }
 
+    public void borrarLlamadas() {
+        SQLiteDatabase db=getWritableDatabase();
+        String sql="DELETE FROM "+TABLE_NAME;
+        db.execSQL(sql);
+    }
+
     public int getCantSalientes(int numTelefono) {
         SQLiteDatabase db = getReadableDatabase();
         String sql = "SELECT COUNT(*) FROM " + TABLE_NAME + " WHERE " +

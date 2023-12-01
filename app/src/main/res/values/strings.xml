@@ -3,4 +3,5 @@
     <string name="num_telefono_incorrecto">Num telefono incorrecto</string>
     <string name="aceptaLlamada">acepta llamada</string>
     <string name="comunicando">comunicando</string>
+    <string name="delete_history">Borrar Historial</string>
 </resources>
