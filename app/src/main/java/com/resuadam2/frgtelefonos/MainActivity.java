@@ -3,8 +3,14 @@ package com.resuadam2.frgtelefonos;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 
+import android.annotation.SuppressLint;
+import android.database.Cursor;
 import android.os.Bundle;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.Toast;
+
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity implements FrgTelefono.OnFrgTelefono {
 
@@ -16,12 +22,23 @@ public class MainActivity extends AppCompatActivity implements FrgTelefono.OnFrg
      */
     int ids[]={R.id.frgT1,R.id.frgT2,R.id.frgT3,R.id.frgT4};
     FrgTelefono[] listaFrgTelefonos;
+    ListView lvTelefonos;
+    ArrayList<String> listaLlamadas;
+
+    ArrayAdapter<String> adapter;
+
+    DBManager dbManager;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         FragmentManager fm=getSupportFragmentManager();
         listaFrgTelefonos =new FrgTelefono[ids.length];
+        lvTelefonos=findViewById(R.id.lvTelefonos);
+        listaLlamadas = llamadas();
+        adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, listaLlamadas);
+        lvTelefonos.setAdapter(adapter);
+        dbManager=new DBManager(this);
         int i=0;
         for(int id:ids) {
             FrgTelefono frgTelefono=(FrgTelefono)fm.findFragmentById(id);
@@ -29,16 +46,45 @@ public class MainActivity extends AppCompatActivity implements FrgTelefono.OnFrg
             frgTelefono.setOnFrgTelefono(new Telefono(i),this);
         }
     }
+
+    @SuppressLint("Range")
+    private ArrayList<String> llamadas() {
+        Cursor c=dbManager.getLlamadas();
+        ArrayList<String> lista=new ArrayList<>();
+        for(int i = 0; i < listaFrgTelefonos.length; i++) {
+            c.moveToFirst();
+            int entrantes = 0, salientes = 0;
+            while(!c.isAfterLast()) {
+                if (c.getInt(c.getColumnIndex(DBManager.COL_NUM_ORIGEN)) == listaFrgTelefonos[i].getTelefono().getNumero()) {
+                    entrantes++;
+                }
+                if (c.getInt(c.getColumnIndex(DBManager.COL_NUM_DESTINO)) == listaFrgTelefonos[i].getTelefono().getNumero()) {
+                    salientes++;
+                }
+            }
+            lista.add("Telefono: " + listaFrgTelefonos[i].getTelefono().getNumero() + " Entrantes: " + entrantes + " Salientes: " + salientes);
+        }
+        return lista;
+    }
+
     @Override
     public boolean llamar(Telefono telefonoOrigen, int numeroDestino) {
         boolean destinoDisponible=true;
         FrgTelefono frgTelefonoDestino;
-        if((frgTelefonoDestino=getFrgTelefono(numeroDestino))!=null)
+        if((frgTelefonoDestino=getFrgTelefono(numeroDestino))!=null){
             destinoDisponible=frgTelefonoDestino.llaman(telefonoOrigen);
+            if(destinoDisponible) {
+                dbManager.insertarLlamada(telefonoOrigen.getNumero(), numeroDestino, "saliente");
+            } else {
+                dbManager.insertarLlamada(telefonoOrigen.getNumero(), numeroDestino, "perdida");
+            }
+        }
         // TODO: else if(numeroDestino (externo) está comunicando) destinoDisponible=false
         String mensaje= telefonoOrigen.getNumero() +" >>> "+numeroDestino;
         mensaje+=" >>> "+getString(destinoDisponible?R.string.aceptaLlamada:R.string.comunicando);
         Toast.makeText(this,mensaje,Toast.LENGTH_SHORT).show();
+        listaLlamadas = llamadas();
+        adapter.notifyDataSetChanged();
         return destinoDisponible;
     }
     @Override

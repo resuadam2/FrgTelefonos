@@ -16,6 +16,11 @@ public class FrgTelefono extends Fragment {
     private TextView tvNumeroPropio, tvInfo;
     private EditText etNumeroDestino;
     private Button bLlamarColgar;
+
+    public Telefono getTelefono() {
+        return telefono;
+    }
+
     public interface OnFrgTelefono {
         boolean llamar(Telefono telefonoOrigen, int numTelefonoDestino);
         void colgar(Telefono telefonoOrigen, int numeroTelefonoDestino);
