@@ -60,4 +60,22 @@ public class DBManager extends SQLiteOpenHelper {
                 COL_NUM_DESTINO + "=" + numTelefono;
         return db.rawQuery(sql, null);
     }
+
+    public int getCantSalientes(int numTelefono) {
+        SQLiteDatabase db = getReadableDatabase();
+        String sql = "SELECT COUNT(*) FROM " + TABLE_NAME + " WHERE " +
+                COL_NUM_ORIGEN + "=" + numTelefono;
+        Cursor c = db.rawQuery(sql, null);
+        c.moveToFirst();
+        return c.getInt(0);
+    }
+
+    public int getCantEntrantes(int numTelefono) {
+        SQLiteDatabase db = getReadableDatabase();
+        String sql = "SELECT COUNT(*) FROM " + TABLE_NAME + " WHERE " +
+                COL_NUM_DESTINO + "=" + numTelefono;
+        Cursor c = db.rawQuery(sql, null);
+        c.moveToFirst();
+        return c.getInt(0);
+    }
 }
