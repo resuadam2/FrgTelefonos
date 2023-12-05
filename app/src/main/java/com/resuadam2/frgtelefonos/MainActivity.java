@@ -21,21 +21,21 @@ public class MainActivity extends AppCompatActivity implements FrgTelefono.OnFrg
 
     /*
      Solución para un nº estático de teléfonos (fragmentos)
-     TODO: mejorar leyendo teléfonos de la BD
+     Se puede mejorar leyendo teléfonos de la BD
      en ese caso habría que crear una estructura dinámica (p.e. HashMap)
      y acceder por su nº de teléfono no necesariamente consecutivo
      */
-    int ids[]={R.id.frgT1,R.id.frgT2,R.id.frgT3,R.id.frgT4};
-    FrgTelefono[] listaFrgTelefonos;
-    ListView lvTelefonos;
-    ArrayList<String> listaLlamadas;
+    int ids[]={R.id.frgT1,R.id.frgT2,R.id.frgT3,R.id.frgT4}; // los ids de los fragmentos
+    FrgTelefono[] listaFrgTelefonos; // la lista de fragmentos
+    ListView lvTelefonos; // el ListView que muestra el historial de llamadas
+    ArrayList<String> listaLlamadas; // la lista de llamadas
 
-    ArrayAdapter<String> adapter;
+    ArrayAdapter<String> adapter; // el adaptador del ListView
 
-    Button btnBorrarHistorial, btnDetails;
-    Spinner spnTelefonos;
+    Button btnBorrarHistorial, btnDetails; // los botones de borrar historial y detalles
+    Spinner spnTelefonos; // el Spinner que muestra los teléfonos disponibles
 
-    DBManager dbManager;
+    DBManager dbManager; // el gestor de la BD
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -88,6 +88,10 @@ public class MainActivity extends AppCompatActivity implements FrgTelefono.OnFrg
 
     }
 
+    /**
+     * Método que devuelve una lista de cadenas con el formato: Telf: <nº teléfono> E: <nº entrantes> S: <nº salientes>
+     * @return la lista de cadenas
+     */
     @SuppressLint("Range")
     private ArrayList<String> llamadas() {
         ArrayList<String> lista=new ArrayList<>();
@@ -99,6 +103,10 @@ public class MainActivity extends AppCompatActivity implements FrgTelefono.OnFrg
         return lista;
     }
 
+    /**
+     * Método que devuelve una lista de cadenas con el formato: <nº teléfono>
+     * @return la lista de cadenas
+     */
     private ArrayList<String> getNumsTelfs() {
         ArrayList<String> lista=new ArrayList<>();
         for(int i = 0; i < listaFrgTelefonos.length; i++) {
@@ -108,6 +116,12 @@ public class MainActivity extends AppCompatActivity implements FrgTelefono.OnFrg
         return lista;
     }
 
+    /**
+     * Método que se invoca cuando se pulsa el botón y no se está hablando
+     * @param telefonoOrigen el teléfono que llama
+     * @param numeroDestino el número al que se llama
+     * @return true si se puede llamar, false en caso contrario
+     */
     @Override
     public boolean llamar(Telefono telefonoOrigen, int numeroDestino) {
         boolean destinoDisponible=true;
@@ -130,6 +144,12 @@ public class MainActivity extends AppCompatActivity implements FrgTelefono.OnFrg
         adapter.notifyDataSetChanged();
         return destinoDisponible;
     }
+
+    /**
+     * Método que se invoca cuando se pulsa el botón y se está hablando y se quiere colgar
+     * @param telefonoOrigen el teléfono que llama
+     * @param numeroDestino el número al que se llama
+     */
     @Override
     public void colgar(Telefono telefonoOrigen, int numeroDestino) {
         FrgTelefono frgTelefono;
@@ -139,6 +159,11 @@ public class MainActivity extends AppCompatActivity implements FrgTelefono.OnFrg
         Toast.makeText(this,mensaje,Toast.LENGTH_SHORT).show();
     }
 
+    /**
+     * Método que devuelve el fragmento que corresponde a un número de teléfono
+     * @param numero el número de teléfono
+     * @return el fragmento correspondiente o null si no existe
+     */
     public FrgTelefono getFrgTelefono(int numero) {
         if (numero<1 || numero>ids.length) return null;
         return listaFrgTelefonos[numero-1];

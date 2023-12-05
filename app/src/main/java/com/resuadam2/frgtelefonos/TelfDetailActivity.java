@@ -13,6 +13,10 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+/**
+ * Activity que muestra el detalle de un teléfono (nº de teléfono y llamadas)
+ * Se invoca desde el MainActivity
+ */
 public class TelfDetailActivity extends AppCompatActivity {
 
         TextView telfDetail;
